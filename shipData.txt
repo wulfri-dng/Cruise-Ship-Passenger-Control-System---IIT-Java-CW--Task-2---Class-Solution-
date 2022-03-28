@@ -1,0 +1,48 @@
+Cabin : 0
+{Passenger 0 : [FName : Danusha, Surname : Navod, Expenses : 512656.0]}
+{Passenger 1 : [FName : Gamage, Surname : asdas, Expenses : 454.0]}
+{Passenger 2 : [FName : e, Surname : e, Expenses : 0.0]}
+Cabin : 1
+{Passenger 0 : [FName : e, Surname : e, Expenses : asdasdasd]}
+{Passenger 1 : [FName : e, Surname : e, Expenses : 0.0]}
+{Passenger 2 : [FName : e, Surname : e, Expenses : 0.0]}
+Cabin : 2
+{Passenger 0 : [FName : e, Surname : e, Expenses : 0.0]}
+{Passenger 1 : [FName : e, Surname : e, Expenses : 0.0]}
+{Passenger 2 : [FName : e, Surname : e, Expenses : 0.0]}
+Cabin : 3
+{Passenger 0 : [FName : e, Surname : e, Expenses : 0.0]}
+{Passenger 1 : [FName : e, Surname : e, Expenses : 0.0]}
+{Passenger 2 : [FName : e, Surname : e, Expenses : 0.0]}
+Cabin : 4
+{Passenger 0 : [FName : e, Surname : e, Expenses : 0.0]}
+{Passenger 1 : [FName : e, Surname : e, Expenses : 0.0]}
+{Passenger 2 : [FName : e, Surname : e, Expenses : 0.0]}
+Cabin : 5
+{Passenger 0 : [FName : asd, Surname : dfgfd, Expenses : 15.0]}
+{Passenger 1 : [FName : e, Surname : e, Expenses : 0.0]}
+{Passenger 2 : [FName : e, Surname : e, Expenses : 0.0]}
+Cabin : 6
+{Passenger 0 : [FName : e, Surname : e, Expenses : 0.0]}
+{Passenger 1 : [FName : e, Surname : e, Expenses : 0.0]}
+{Passenger 2 : [FName : e, Surname : e, Expenses : 0.0]}
+Cabin : 7
+{Passenger 0 : [FName : e, Surname : e, Expenses : 0.0]}
+{Passenger 1 : [FName : e, Surname : e, Expenses : 0.0]}
+{Passenger 2 : [FName : e, Surname : e, Expenses : 0.0]}
+Cabin : 8
+{Passenger 0 : [FName : e, Surname : e, Expenses : 0.0]}
+{Passenger 1 : [FName : e, Surname : e, Expenses : 0.0]}
+{Passenger 2 : [FName : e, Surname : e, Expenses : 0.0]}
+Cabin : 9
+{Passenger 0 : [FName : e, Surname : e, Expenses : 0.0]}
+{Passenger 1 : [FName : e, Surname : e, Expenses : 0.0]}
+{Passenger 2 : [FName : e, Surname : e, Expenses : 0.0]}
+Cabin : 10
+{Passenger 0 : [FName : e, Surname : e, Expenses : 0.0]}
+{Passenger 1 : [FName : e, Surname : e, Expenses : 0.0]}
+{Passenger 2 : [FName : e, Surname : e, Expenses : 0.0]}
+Cabin : 11
+{Passenger 0 : [FName : e, Surname : e, Expenses : 0.0]}
+{Passenger 1 : [FName : e, Surname : e, Expenses : 0.0]}
+{Passenger 2 : [FName : e, Surname : e, Expenses : 0.0]}
