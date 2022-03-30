@@ -1,14 +1,14 @@
 Cabin : 0
-{Passenger 0 : [FName : Danusha, Surname : Navod, Expenses : 512656.0]}
-{Passenger 1 : [FName : Gamage, Surname : asdas, Expenses : 454.0]}
-{Passenger 2 : [FName : e, Surname : e, Expenses : 0.0]}
+{Passenger 0 : [FName : daaaa, Surname : Navod, Expenses : 512656.0]}
+{Passenger 1 : [FName : Nicholas, Surname : Cook, Expenses : 454.0]}
+{Passenger 2 : [FName : Mark, Surname : Thomas, Expenses : 0.0]}
 Cabin : 1
-{Passenger 0 : [FName : e, Surname : e, Expenses : asdasdasd]}
+{Passenger 0 : [FName : Alyse, Surname : Burton, Expenses : 1000]}
 {Passenger 1 : [FName : e, Surname : e, Expenses : 0.0]}
 {Passenger 2 : [FName : e, Surname : e, Expenses : 0.0]}
 Cabin : 2
-{Passenger 0 : [FName : e, Surname : e, Expenses : 0.0]}
-{Passenger 1 : [FName : e, Surname : e, Expenses : 0.0]}
+{Passenger 0 : [FName : Kyung, Surname : Anderson, Expenses : 0.0]}
+{Passenger 1 : [FName : Joann, Surname : Bailey, Expenses : 0.0]}
 {Passenger 2 : [FName : e, Surname : e, Expenses : 0.0]}
 Cabin : 3
 {Passenger 0 : [FName : e, Surname : e, Expenses : 0.0]}

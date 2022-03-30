@@ -15,6 +15,10 @@ public class Cabin {
         return cabinNo;
     }
 
+    public Passenger[] getPassengerArray() {
+        return passengerArray;
+    }
+
     public void initialise() {
         for (int i = 0; i < passengerArray.length; i++) {
             passengerArray[i] = new Passenger("e", "e", 0);

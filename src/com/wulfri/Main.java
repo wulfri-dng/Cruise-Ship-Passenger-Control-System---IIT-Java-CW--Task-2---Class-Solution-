@@ -77,7 +77,6 @@ public class Main {
                     double passengerExpenses;
                     try {
                         passengerExpenses = scanner.nextDouble();
-                        double checkValidityTemp = passengerExpenses + 10;
                     } catch (InputMismatchException ex) {
                         System.out.println("Error!!! You cannot add a String as an expense.");
                         break;
@@ -209,7 +208,6 @@ public class Main {
                             File inputFile = new File(filePath);
                             Scanner readFile = new Scanner(inputFile);
                             String fileLine;
-                            String passengerName = "e";
                             for(int i = 0; i < cabinArray.length; i++) {
                                 fileLine = readFile.nextLine();
                                 String cabinNoString;
@@ -295,6 +293,65 @@ public class Main {
         return canRead;
     }
 
+    public static void sortPassengerAlphabetically(Cabin[] cabinArray) {
+        int passengersInRoom = 3;
+        String[] passengerList = new String[cabinArray.length * passengersInRoom];
+        int listPosition = 0;
+        for(Cabin cabin : cabinArray) {
+            for(Passenger passenger : cabin.getPassengerArray()) {
+                if(!passenger.getFirstName().equals("e")) {
+                    passengerList[listPosition] = passenger.getFirstName();
+                    listPosition++;
+                }
+            }
+        }
+
+        int currentWordIndex = 1;
+        int currentCharIndex = 0;
+        while (true) {
+            try {
+                if(passengerList[currentWordIndex] != null) {
+                    try {
+                        char prevPassengerChar = Character.toLowerCase(passengerList[currentWordIndex-1].charAt(currentCharIndex));
+                        char currPassengerChar = Character.toLowerCase(passengerList[currentWordIndex].charAt(currentCharIndex));
+                        if(prevPassengerChar > currPassengerChar) {
+                            String temp = passengerList[currentWordIndex - 1];
+                            passengerList[currentWordIndex - 1] = passengerList[currentWordIndex];
+                            passengerList[currentWordIndex] = temp;
+                            if(currentWordIndex > 1) {
+                                currentWordIndex--;
+                            } else {
+                                currentWordIndex++;
+                            }
+                            currentCharIndex = 0;
+                        } else if (prevPassengerChar == currPassengerChar) {
+                            currentCharIndex++;
+                        } else {
+                            currentWordIndex ++;
+                            currentCharIndex = 0;
+                        }
+                    } catch (StringIndexOutOfBoundsException ex) {
+                        currentWordIndex ++;
+                        currentCharIndex = 0;
+                    }
+                } else {
+                    break;
+                }
+            } catch (ArrayIndexOutOfBoundsException ex) {
+                break;
+            }
+        }
+
+        System.out.println("=====================================================");
+        for (int i = 0; i < passengerList.length; i++) {
+            if (passengerList[i] != null) {
+                System.out.println(i + ") " + passengerList[i]);
+            }
+        }
+        System.out.println("-------------- END OF PASSENGER SORT ----------------");
+        System.out.println();
+    }
+
     private static boolean shutDown() {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Do you want to shut down the system?\n(This step cannot be reversible. Save your data before shutting down the system)");
@@ -311,9 +368,5 @@ public class Main {
             System.out.println("Invalid data type input!!! Try again.");
         }
         return true;
-    }
-
-    private static void sortPassengerAlphabetically(Cabin[] cabinArray) {
-
     }
 }
