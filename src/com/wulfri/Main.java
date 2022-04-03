@@ -14,6 +14,7 @@ public class Main {
         boolean systemOn = true;
         int cabinCount = 12;
         Cabin[] cabinArray = new Cabin[cabinCount];
+        ArrayList<Passenger> waitingList = new ArrayList<>();
         initialise(cabinArray);
         mainMenu(cabinArray, systemOn);
     }
@@ -36,9 +37,10 @@ public class Main {
             System.out.println("E: Display Empty cabins");
             System.out.println("D: Delete customer from cabin");
             System.out.println("F: Find cabin from customer name");
+            System.out.println("T: Display passengers expenses");
             System.out.println("S: Store program data into file");
             System.out.println("L: Load program data from file");
-//            System.out.println("O: View passengers Ordered alphabetically by name");
+            System.out.println("O: View passengers Ordered alphabetically by name");
             System.out.println("Exit: Shut down the system and exit application");
             System.out.println("-----------------------------------------------------");
             System.out.print("Select an option above to continue: ");
@@ -50,13 +52,26 @@ public class Main {
                 case "E" -> displayEmptyCabins(cabinArray);
                 case "D" -> deletePassenger(cabinArray);
                 case "F" -> findCabinByPassengerName(cabinArray);
+                case "T" -> displayPassengersExpenses(cabinArray);
                 case "S" -> storeShipData(cabinArray);
                 case "L" -> loadShipData(cabinArray);
-                case "EXIT" -> systemOn = shutDown();
                 case "O" -> sortPassengerAlphabetically(cabinArray);
+                case "EXIT" -> systemOn = shutDown();
                 default -> System.out.println("Invalid input!!! Check the entered number and try again.");
             }
         }
+    }
+
+    public static ArrayList<Passenger> getBookedPassengersArray(Cabin[] cabinArray) {
+        ArrayList<Passenger> passengerArray = new ArrayList<>();
+        for(Cabin cabin : cabinArray) {
+            for(Passenger passenger : cabin.getPassengerArray()) {
+                if(!passenger.getFirstName().equals("e")) {
+                    passengerArray.add(passenger);
+                }
+            }
+        }
+        return passengerArray;
     }
 
     private static void addPassenger(Cabin[] cabinArray) {
@@ -69,8 +84,16 @@ public class Main {
                     break;
                 } else if(cabinNo >= 0 && cabinNo < cabinArray.length && !cabinArray[cabinNo].isFull()) {
                     System.out.println("Adding a passenger to the cabin " + cabinNo);
-                    System.out.println("Enter passenger's  first name : ");
-                    String passengerFName = scanner.next();
+                    String passengerFName;
+                    while (true) {
+                        System.out.println("Enter passenger's  first name : ");
+                        passengerFName = scanner.next();
+                        if(passengerFName.equals("e")){
+                            System.out.println("You cannot enter 'e' as the passenger's first name. Enter a valid name again.");
+                        } else {
+                            break;
+                        }
+                    }
                     System.out.println("Enter passenger's surname : ");
                     String passengerSurname = scanner.next();
                     System.out.println("Enter passenger's expenses : ");
@@ -170,6 +193,29 @@ public class Main {
             System.out.println("Exiting passenger search...");
         }
         System.out.println("-------------- END OF SEARCH PASSENGER --------------");
+    }
+
+    public static void displayPassengersExpenses(Cabin[] cabinArray) {
+        System.out.println("=====================================================");
+        ArrayList<Passenger> bookedPassengers = getBookedPassengersArray(cabinArray);
+        System.out.println("   Passenger          Expense");
+        System.out.println("-------------------------------");
+        double totalExpense = 0;
+        for(int i = 0; i < bookedPassengers.size(); i++) {
+            int emptySpaceCount = 18 - bookedPassengers.get(i).getFirstName().length();
+            String emptySpace = " ";
+            for (int j = 0; j < emptySpaceCount; j++) {
+                emptySpace = emptySpace + " ";
+            }
+            System.out.println(i + ") " + bookedPassengers.get(i).getFirstName() + emptySpace + bookedPassengers.get(i).getExpenses());
+            totalExpense += bookedPassengers.get(i).getExpenses();
+        }
+        System.out.println("-------------------------------");
+        System.out.println("*  Total       =      " + totalExpense);
+        System.out.println("-------------------------------\n");
+        if(bookedPassengers.size() == 0) {
+            System.out.println("Cruise ship is empty. Add passengers before accessing data about expenses.\nExiting expenses...");
+        }
     }
 
     public static void storeShipData(Cabin[] cabinArray) {

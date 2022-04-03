@@ -1,5 +1,6 @@
 package com.wulfri;
 
+import java.util.ArrayList;
 import java.util.Locale;
 
 public class Cabin {
