@@ -1,11 +1,11 @@
 package com.wulfri;
 
-import java.util.ArrayList;
 import java.util.Locale;
 
 public class Cabin {
     int cabinNo;
     int passengerCount = 3;
+    boolean isBooked;
     Passenger[] passengerArray = new Passenger[passengerCount];
 
     public Cabin(int cabinNo) {
@@ -51,7 +51,21 @@ public class Cabin {
                     passenger.setFirstName(firstName);
                     passenger.setSurname(surname);
                     passenger.setExpenses(expenses);
-                    System.out.println("Passenger " + firstName + " added to the cabin " + cabinNo);
+                    System.out.println("* Passenger " + firstName + " added to the cabin " + cabinNo);
+                    break;
+                }
+            }
+        }
+    }
+
+    public void addPassenger(Passenger newPassenger) {
+        if(!isFull()) {
+            for (Passenger passenger : passengerArray) {
+                if (passenger.firstName.equals("e")) {
+                    passenger.setFirstName(newPassenger.getFirstName());
+                    passenger.setSurname(newPassenger.getSurname());
+                    passenger.setExpenses(newPassenger.getExpenses());
+                    System.out.println("Passenger " + passenger.getFirstName() + " added to the cabin " + cabinNo);
                     break;
                 }
             }
@@ -96,15 +110,43 @@ public class Cabin {
         return false;
     }
 
-    public boolean deletePassenger(String passengerName) {
+//    public boolean deletePassenger(String passengerName) {
+//        for (Passenger passenger : passengerArray) {
+//            if (passenger.getFirstName().toLowerCase(Locale.ROOT).equals(passengerName.toLowerCase(Locale.ROOT))) {
+//                passenger.setFirstName("e");
+//                passenger.setSurname("e");
+//                passenger.setExpenses(0);
+//                return true;
+//            }
+//        }
+//        return false;
+//    }
+
+    public void deletePassenger(Passenger searchedPassenger) {
         for (Passenger passenger : passengerArray) {
-            if (passenger.getFirstName().toLowerCase(Locale.ROOT).equals(passengerName.toLowerCase(Locale.ROOT))) {
+            if (passenger == searchedPassenger) {
+                if(!passenger.getFirstName().equals("e")) {
+                    System.out.println("* Passenger " + passenger.getFirstName() + " deleted successfully.");
+                }
                 passenger.setFirstName("e");
                 passenger.setSurname("e");
                 passenger.setExpenses(0);
-                return true;
             }
         }
-        return false;
+    }
+
+    public void deleteCabin() {
+        for (Passenger passenger : passengerArray) {
+            deletePassenger(passenger);
+        }
+    }
+
+    public Passenger searchInCabin(String passengerName) {
+        for (Passenger passenger : passengerArray) {
+            if(passenger.getFirstName().toLowerCase(Locale.ROOT).equals(passengerName.toLowerCase(Locale.ROOT))) {
+                return passenger;
+            }
+        }
+        return null;
     }
 }

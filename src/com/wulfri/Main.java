@@ -3,20 +3,16 @@ package com.wulfri;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.InputMismatchException;
-import java.util.Locale;
-import java.util.Scanner;
+import java.util.*;
 
 public class Main {
-
     public static void main(String[] args) {
         boolean systemOn = true;
         int cabinCount = 12;
         Cabin[] cabinArray = new Cabin[cabinCount];
-        ArrayList<Passenger> waitingList = new ArrayList<>();
+        CircularQueue queue = new CircularQueue(12);
         initialise(cabinArray);
-        mainMenu(cabinArray, systemOn);
+        mainMenu(cabinArray, systemOn, queue);
     }
 
     private static void initialise(Cabin[] cabinArray) {
@@ -26,7 +22,7 @@ public class Main {
         }
     }
 
-    private static void mainMenu(Cabin[] cabinArray, boolean systemOn) {
+    private static void mainMenu(Cabin[] cabinArray, boolean systemOn, CircularQueue queue) {
         Scanner scanner = new Scanner(System.in);
         System.out.println("=======================================================");
         System.out.println("||| Welcome to Cruise Ship passenger control center |||");
@@ -47,10 +43,10 @@ public class Main {
             String userInput = scanner.next().toUpperCase(Locale.ROOT);
 
             switch (userInput) {
-                case "A" -> addPassenger(cabinArray);
+                case "A" -> addPassenger(cabinArray, queue);
                 case "V" -> viewAllCabins(cabinArray);
                 case "E" -> displayEmptyCabins(cabinArray);
-                case "D" -> deletePassenger(cabinArray);
+                case "D" -> deletePassenger(cabinArray, queue);
                 case "F" -> findCabinByPassengerName(cabinArray);
                 case "T" -> displayPassengersExpenses(cabinArray);
                 case "S" -> storeShipData(cabinArray);
@@ -62,66 +58,156 @@ public class Main {
         }
     }
 
-    public static ArrayList<Passenger> getBookedPassengersArray(Cabin[] cabinArray) {
-        ArrayList<Passenger> passengerArray = new ArrayList<>();
+    private static boolean isShipFull(Cabin[] cabinArray) {
+        for(Cabin cabin : cabinArray) {
+            if (cabin.isEmpty()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public static Passenger[] getBookedPassengersArray(Cabin[] cabinArray) {
+        Passenger[] passengerArray = new Passenger[36];
+        int index = 0;
         for(Cabin cabin : cabinArray) {
             for(Passenger passenger : cabin.getPassengerArray()) {
                 if(!passenger.getFirstName().equals("e")) {
-                    passengerArray.add(passenger);
+                    passengerArray[index] = passenger;
+                    index++;
                 }
             }
         }
         return passengerArray;
     }
 
-    private static void addPassenger(Cabin[] cabinArray) {
+    private static void addingSinglePassenger(Cabin[] cabinArray, CircularQueue queue, int cabinNo) {
         Scanner scanner = new Scanner(System.in);
         while (true) {
-            System.out.println("Enter cabin number (0 - " + (cabinArray.length - 1) + ") or " + (cabinArray.length) + " to stop: ");
+            System.out.println("Enter passenger's  first name : ");
+            String passengerFName = scanner.next();
+            if(passengerFName.equals("e")){
+                System.out.println("You cannot enter 'e' as the passenger's first name. Enter a valid name again.");
+                continue;
+            }
             try {
-                int cabinNo = scanner.nextInt();
-                if(cabinNo == cabinArray.length) {
-                    break;
-                } else if(cabinNo >= 0 && cabinNo < cabinArray.length && !cabinArray[cabinNo].isFull()) {
-                    System.out.println("Adding a passenger to the cabin " + cabinNo);
-                    String passengerFName;
-                    while (true) {
-                        System.out.println("Enter passenger's  first name : ");
-                        passengerFName = scanner.next();
-                        if(passengerFName.equals("e")){
-                            System.out.println("You cannot enter 'e' as the passenger's first name. Enter a valid name again.");
-                        } else {
-                            break;
-                        }
-                    }
-                    System.out.println("Enter passenger's surname : ");
-                    String passengerSurname = scanner.next();
-                    System.out.println("Enter passenger's expenses : ");
-                    double passengerExpenses;
+                Integer.parseInt(passengerFName);
+                System.out.println("Error!!! You cannot enter a number as a passenger name.");
+                continue;
+            } catch (NumberFormatException ex) {
+                System.out.println("Enter passenger's surname : ");
+            }
+            String passengerSurname = scanner.next();
+            try {
+                Integer.parseInt(passengerSurname);
+                System.out.println("Error!!! You cannot enter a number as a passenger name.");
+                continue;
+            } catch (NumberFormatException ex) {
+                System.out.println("Enter passenger's expenses : ");
+            }
+            try {
+                double passengerExpenses = scanner.nextDouble();
+                if(cabinNo != -1) {
+                    cabinArray[cabinNo].addPassenger(new Passenger(passengerFName, passengerSurname, passengerExpenses));
+                } else {
+                    queue.enQueue(new Passenger(passengerFName, passengerSurname, passengerExpenses));
+                    System.out.println("Passenger " + passengerFName + " added to the waiting list.");
+                }
+                break;
+            } catch (InputMismatchException ex) {
+                System.out.println("Error!!! You cannot add a String as an expense.");
+                scanner.next();
+            }
+        }
+    }
+
+    private static void addPassengersOfCabin(Cabin[] cabinArray, int cabinNo, CircularQueue queue) {
+        Scanner scanner = new Scanner(System.in);
+        int passengerIndex = 1;
+        System.out.println("You can add upto 3 passengers into the cabin " + cabinNo);
+        boolean addAnotherPassenger = true;
+        while (passengerIndex < 4) {
+            addingSinglePassenger(cabinArray, queue, cabinNo);
+            passengerIndex++;
+            if(passengerIndex != 4) {
+                while (true) {
+                    System.out.println("Do you want to add another passenger into the cabin " + cabinNo + "?");
+                    System.out.println("Y: Yes. Add passenger " + passengerIndex + "\nN: No. Back to the previous menu.");
                     try {
-                        passengerExpenses = scanner.nextDouble();
+                        String userInput = scanner.nextLine();
+                        if(userInput.toLowerCase(Locale.ROOT).equals("y")) {
+                            break;
+                        } else if (userInput.toLowerCase(Locale.ROOT).equals("n")) {
+                            addAnotherPassenger = false;
+                            break;
+                        } else {
+                            System.out.println("Invalid input!!! Try again.");
+                        }
                     } catch (InputMismatchException ex) {
-                        System.out.println("Error!!! You cannot add a String as an expense.");
+                        System.out.println("Invalid input!!! Try again.");
+                    }
+                }
+            }
+            if (!addAnotherPassenger) {
+                System.out.println("Moving to previous menu...");
+                return;
+            }
+        }
+        if (passengerIndex == 4) {
+            System.out.println("Cabin " + cabinNo + " is full. \nMoving to previous menu...");
+        }
+    }
+
+    private static void addPassenger(Cabin[] cabinArray, CircularQueue queue) {
+        Scanner scanner = new Scanner(System.in);
+        while (true) {
+                if (!isShipFull(cabinArray)) {
+                    int cabinNo;
+                    try {
+                        System.out.println("Enter cabin number (0 - " + (cabinArray.length - 1) + ") or " + (cabinArray.length) + " to stop: ");
+                        cabinNo = scanner.nextInt();
+                    } catch (InputMismatchException ex) {
+                        System.out.println("Invalid input!!!");
+                        scanner.next();
+                        continue;
+                    }
+                    if (cabinNo == cabinArray.length) {
                         break;
                     }
                     try {
-                        Integer.parseInt(passengerFName);
-                        Integer.parseInt(passengerSurname);
-                        System.out.println("Error!!! You cannot enter a number as a passenger name.");
-                    } catch (NumberFormatException ex) {
-                        cabinArray[cabinNo].addPassenger(passengerFName, passengerSurname, passengerExpenses);
+                        if (cabinNo < 0 || cabinNo > cabinArray.length) {
+                            System.out.println("Invalid input!!! Enter a number between 0 - " + (cabinArray.length - 1));
+                        } else if (!cabinArray[cabinNo].isEmpty()) {
+                            System.out.println("Cabin " + cabinNo + " is already booked. You can add the passenger into a another cabin.");
+                        } else {
+                            addPassengersOfCabin(cabinArray, cabinNo, queue);
+                        }
+                    } catch (Exception ex) {
+                        System.out.println("Invalid input!!! Enter a number between 0 - " + (cabinArray.length - 1) + " or " + (cabinArray.length) + " to stop: ");
+                        System.out.println("Exiting add passenger...");
+                        break;
                     }
-                } else if(cabinArray[cabinNo].isFull()) {
-                    System.out.println("Cabin " + cabinNo + " is already booked. Try another cabin.");
                 } else {
-                    System.out.println("Invalid input!!! Enter a number between 0 - " + (cabinArray.length - 1));
+                    while (true) {
+                        try {
+                            System.out.println("Cruise ship is full. Do you want to add the passenger into the waiting list?");
+                            System.out.println("1: Add the new passenger into waiting list\n2: Return to main menu");
+                            String userInput = scanner.next();
+                            if (userInput.equals("1")) {
+                                addingSinglePassenger(cabinArray, queue, -1);
+                            } else if (userInput.equals("2")) {
+                                break;
+                            } else {
+                                System.out.println("Invalid input!!! Try again.");
+                            }
+                            scanner.nextLine();
+                        } catch (InputMismatchException ex) {
+                            System.out.println("Invalid input!!! Try again.");
+                        }
+                    }
+                    break;
                 }
-            } catch (InputMismatchException ex) {
-                System.out.println("Invalid input!!! Enter a number between 0 - " + (cabinArray.length - 1));
-                System.out.println("Exiting add passenger...");
-                break;
             }
-        }
     }
 
     public static void viewAllCabins(Cabin[] cabinArray) {
@@ -134,44 +220,80 @@ public class Main {
     }
 
     public static void displayEmptyCabins(Cabin[] cabinArray) {
-        ArrayList<Cabin> emptyCabins = new ArrayList<>();
+        Cabin[] emptyCabins = new Cabin[cabinArray.length];
+        int index = 0;
         for (Cabin cabin : cabinArray) {
             if(!cabin.isFull()) {
-                emptyCabins.add(cabin);
+                emptyCabins[index] = cabin;
+                index++;
             }
         }
-        if (!(emptyCabins.size() == 0)) {
+        if (!(emptyCabins.length == 0)) {
             System.out.println("====================================");
-            System.out.println(emptyCabins.size() + " cabins detected with empty slots.");
+            System.out.println(emptyCabins.length + " cabins detected with empty slots.");
             System.out.println("------------------------------------");
             for (Cabin cabin : emptyCabins) {
-                System.out.println("Cabin " + cabin.getCabinNo() + " : " + cabin.emptyPassengerSlots() + " passenger slot available");
+                if(cabin.isEmpty()) {
+                    System.out.println("Cabin " + cabin.getCabinNo() + " : EMPTY CABIN");
+                } else {
+                    System.out.println("Cabin " + cabin.getCabinNo() + " : " + cabin.emptyPassengerSlots() + " passenger slot available");
+                }
             }
-            System.out.println("------------ END OF DISPLAY EMPTY CABINS ------------");
+            System.out.println("\n------------ END OF DISPLAY EMPTY CABINS ------------");
         } else {
             System.out.println("Every cabin is full.");
         }
     }
 
-    public static void deletePassenger(Cabin[] cabinArray) {
+    public static void deletePassenger(Cabin[] cabinArray, CircularQueue queue) {
         Scanner scanner = new Scanner(System.in);
+        boolean passengerDeleted = false;
+        boolean isDequeue = isShipFull(cabinArray);
         System.out.println("=====================================================");
         System.out.println("Enter passenger's first name to remove the passenger");
         System.out.print("Enter: ");
         String userInput = scanner.next();
-        boolean passengerDeleted = false;
         for(Cabin cabin : cabinArray) {
-            if(cabin.deletePassenger(userInput)) {
-                System.out.println("Passenger " + userInput + " deleted successfully");
-                passengerDeleted = true;
-                break;
+            Passenger searchedPassenger = cabin.searchInCabin(userInput);
+            if(searchedPassenger != null) {
+                while (true) {
+                    boolean canDeQueue = false;
+                    System.out.println("Searched passenger " + searchedPassenger.getFirstName() + " found in cabin " + cabin.getCabinNo());
+                    System.out.println("1: Only delete the selected passenger (" + searchedPassenger.getFirstName() + ")\n2: Delete the whole cabin (Cabin - " + cabin.getCabinNo() + ")");
+                    scanner.nextLine();
+                    String innerUserInput = scanner.nextLine();
+                    if(innerUserInput.equals("1")) {
+                        cabin.deletePassenger(searchedPassenger);
+                        passengerDeleted = true;
+                        if(cabin.isEmpty()) {
+                            canDeQueue = true;
+                        } else {
+                            break;
+                        }
+                    } else if(innerUserInput.equals("2")) {
+                        cabin.deleteCabin();
+                        canDeQueue = true;
+                        passengerDeleted = true;
+                        System.out.println("* Cabin " + cabin.getCabinNo() + " deleted successfully.");
+                    } else {
+                        System.out.println("Invalid input!!! Try again.");
+                    }
+                    if(canDeQueue) {
+                        Passenger deQueuedPassenger = queue.deQueue(); //DeQueue passengers from waiting list into the ship
+                        if(isDequeue && deQueuedPassenger != null) {
+                            System.out.println("* Empty cabin detected. Adding a passenger from the waiting list...");
+                            cabin.addPassenger(deQueuedPassenger.getFirstName(), deQueuedPassenger.getSurname(), deQueuedPassenger.getExpenses());
+                        }
+                        break;
+                    }
+                }
             }
         }
         if (!passengerDeleted) {
             System.out.println("Invalid input!!! Cannot find passenger : " + userInput + ". Check the name and try again.");
             System.out.println("Exiting delete passenger...");
         }
-        System.out.println("---------------- END OF DELETE PASSENGER ----------------\n");
+        System.out.println("\n---------------- END OF DELETE PASSENGER ----------------\n");
     }
 
     public static void findCabinByPassengerName(Cabin[] cabinArray) {
@@ -197,23 +319,25 @@ public class Main {
 
     public static void displayPassengersExpenses(Cabin[] cabinArray) {
         System.out.println("=====================================================");
-        ArrayList<Passenger> bookedPassengers = getBookedPassengersArray(cabinArray);
+        Passenger[] bookedPassengers = getBookedPassengersArray(cabinArray);
         System.out.println("   Passenger          Expense");
         System.out.println("-------------------------------");
         double totalExpense = 0;
-        for(int i = 0; i < bookedPassengers.size(); i++) {
-            int emptySpaceCount = 18 - bookedPassengers.get(i).getFirstName().length();
-            String emptySpace = " ";
-            for (int j = 0; j < emptySpaceCount; j++) {
-                emptySpace = emptySpace + " ";
+        for(int i = 0; i < bookedPassengers.length; i++) {
+            if(bookedPassengers[i] != null) {
+                int emptySpaceCount = 18 - bookedPassengers[i].getFirstName().length();
+                String emptySpace = " ";
+                for (int j = 0; j < emptySpaceCount; j++) {
+                    emptySpace = emptySpace + " ";
+                }
+                System.out.println(i + ") " + bookedPassengers[i].getFirstName() + emptySpace + bookedPassengers[i].getExpenses());
+                totalExpense += bookedPassengers[i].getExpenses();
             }
-            System.out.println(i + ") " + bookedPassengers.get(i).getFirstName() + emptySpace + bookedPassengers.get(i).getExpenses());
-            totalExpense += bookedPassengers.get(i).getExpenses();
         }
         System.out.println("-------------------------------");
         System.out.println("*  Total       =      " + totalExpense);
         System.out.println("-------------------------------\n");
-        if(bookedPassengers.size() == 0) {
+        if(bookedPassengers.length == 0) {
             System.out.println("Cruise ship is empty. Add passengers before accessing data about expenses.\nExiting expenses...");
         }
     }
