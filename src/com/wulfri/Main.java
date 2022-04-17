@@ -108,7 +108,7 @@ public class Main {
             try {
                 double passengerExpenses = scanner.nextDouble();
                 if(cabinNo != -1) {
-                    cabinArray[cabinNo].addPassenger(new Passenger(passengerFName, passengerSurname, passengerExpenses));
+                    cabinArray[cabinNo].addPassenger(new Passenger(passengerFName, passengerSurname, passengerExpenses), false);
                 } else {
                     queue.enQueue(new Passenger(passengerFName, passengerSurname, passengerExpenses));
                     System.out.println("Passenger " + passengerFName + " added to the waiting list.");
@@ -220,29 +220,20 @@ public class Main {
     }
 
     public static void displayEmptyCabins(Cabin[] cabinArray) {
-        Cabin[] emptyCabins = new Cabin[cabinArray.length];
-        int index = 0;
-        for (Cabin cabin : cabinArray) {
-            if(!cabin.isFull()) {
-                emptyCabins[index] = cabin;
-                index++;
-            }
-        }
-        if (!(emptyCabins.length == 0)) {
-            System.out.println("====================================");
-            System.out.println(emptyCabins.length + " cabins detected with empty slots.");
-            System.out.println("------------------------------------");
-            for (Cabin cabin : emptyCabins) {
+        int emptyCabins = 0;
+        if(isShipFull(cabinArray)) {
+            System.out.println("Every cabin is full. ");
+        } else {
+            for (Cabin cabin : cabinArray) {
                 if(cabin.isEmpty()) {
                     System.out.println("Cabin " + cabin.getCabinNo() + " : EMPTY CABIN");
-                } else {
-                    System.out.println("Cabin " + cabin.getCabinNo() + " : " + cabin.emptyPassengerSlots() + " passenger slot available");
+                    emptyCabins++;
                 }
             }
-            System.out.println("\n------------ END OF DISPLAY EMPTY CABINS ------------");
-        } else {
-            System.out.println("Every cabin is full.");
         }
+        System.out.println("------------------------------------");
+        System.out.println(emptyCabins + " empty cabins detected.");
+        System.out.println("\n------------ END OF DISPLAY EMPTY CABINS ------------");
     }
 
     public static void deletePassenger(Cabin[] cabinArray, CircularQueue queue) {
@@ -305,6 +296,7 @@ public class Main {
         boolean passengerFound = false;
         for(Cabin cabin : cabinArray) {
             if(cabin.isPassengerAvailable(userInput)) {
+                System.out.println("Passenger found.");
                 System.out.println(userInput + "'s cabin number: " + cabin.getCabinNo());
                 passengerFound = true;
                 break;
@@ -415,7 +407,7 @@ public class Main {
                                         surname = "e";
                                         expensesDouble = 0.0;
                                     }
-                                    cabinArray[cabinNoInt].passengerArray[j] = new Passenger(fName, surname, expensesDouble);
+                                    cabinArray[cabinNoInt].addPassenger(new Passenger(fName, surname, expensesDouble), true);
                                     System.out.println("DATA LOADED --- fName: " + fName + ", surname: " + surname + ", expenses: " + expensesDouble);
                                 }
                             }

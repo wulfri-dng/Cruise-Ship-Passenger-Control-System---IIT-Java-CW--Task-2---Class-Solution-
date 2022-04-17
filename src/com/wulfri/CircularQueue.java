@@ -3,19 +3,13 @@ package com.wulfri;
 import java.util.ArrayList;
 
 public class CircularQueue {
-    // Declaring the class variables.
     private int size, front, rear;
 
-    // Declaring array list of integer type.
-    private ArrayList<Passenger> queue = new ArrayList<Passenger>();
+    private Passenger[] queue = new Passenger[12];
 
     CircularQueue(int size) {
         this.size = size;
         this.front = this.rear = -1;
-    }
-
-    public ArrayList<Passenger> getQueue() {
-        return queue;
     }
 
     // Method to insert a new element in the queue.
@@ -30,12 +24,12 @@ public class CircularQueue {
         else if(front == -1) {
             front = 0;
             rear = 0;
-            queue.add(rear, passenger);
+            queue[rear] =  passenger;
         }
 
         else if(rear == size - 1 && front != 0) {
             rear = 0;
-            queue.set(rear, passenger);
+            queue[rear] = passenger;
         }
 
         else {
@@ -43,12 +37,14 @@ public class CircularQueue {
 
             // Adding a new element if
             if(front <= rear) {
-                queue.add(rear, passenger);
+//                queue.add(rear, passenger);
+                queue[rear] = passenger;
             }
 
             // Else updating old value
             else {
-                queue.set(rear, passenger);
+//                queue.set(rear, passenger);
+                queue[rear] = passenger;
             }
         }
     }
@@ -64,7 +60,8 @@ public class CircularQueue {
             return null;
         }
 
-        deQueuedPassenger = queue.get(front);
+//        deQueuedPassenger = queue.get(front);
+        deQueuedPassenger = queue[front];
 
         // Condition for only one element
         if(front == rear) {
@@ -102,7 +99,7 @@ public class CircularQueue {
             // Loop to print elements from
             // front to rear.
             for(int i = front; i <= rear; i++) {
-                System.out.print(queue.get(i));
+                System.out.println(queue[i]);
                 System.out.print(" ");
             }
             System.out.println();
@@ -115,14 +112,14 @@ public class CircularQueue {
             // Loop for printing elements from
             // front to max size or last index
             for(int i = front; i < size; i++) {
-                System.out.print(queue.get(i));
+                System.out.println(queue[i]);
                 System.out.print(" ");
             }
 
             // Loop for printing elements from
             // 0th index till rear position
             for(int i = 0; i <= rear; i++) {
-                System.out.print(queue.get(i));
+                System.out.println(queue[i]);
                 System.out.print(" ");
             }
             System.out.println();

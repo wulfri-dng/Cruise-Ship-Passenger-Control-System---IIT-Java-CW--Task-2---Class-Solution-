@@ -58,14 +58,16 @@ public class Cabin {
         }
     }
 
-    public void addPassenger(Passenger newPassenger) {
+    public void addPassenger(Passenger newPassenger, boolean loadData) {
         if(!isFull()) {
             for (Passenger passenger : passengerArray) {
                 if (passenger.firstName.equals("e")) {
                     passenger.setFirstName(newPassenger.getFirstName());
                     passenger.setSurname(newPassenger.getSurname());
                     passenger.setExpenses(newPassenger.getExpenses());
-                    System.out.println("Passenger " + passenger.getFirstName() + " added to the cabin " + cabinNo);
+                    if(!loadData) {
+                        System.out.println("Passenger " + passenger.getFirstName() + " added to the cabin " + cabinNo);
+                    }
                     break;
                 }
             }
@@ -109,18 +111,6 @@ public class Cabin {
         }
         return false;
     }
-
-//    public boolean deletePassenger(String passengerName) {
-//        for (Passenger passenger : passengerArray) {
-//            if (passenger.getFirstName().toLowerCase(Locale.ROOT).equals(passengerName.toLowerCase(Locale.ROOT))) {
-//                passenger.setFirstName("e");
-//                passenger.setSurname("e");
-//                passenger.setExpenses(0);
-//                return true;
-//            }
-//        }
-//        return false;
-//    }
 
     public void deletePassenger(Passenger searchedPassenger) {
         for (Passenger passenger : passengerArray) {
